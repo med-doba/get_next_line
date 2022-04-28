@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: med-doba <med-doba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/12/23 13:30:09 by med-doba          #+#    #+#             */
-/*   Updated: 2021/12/29 19:40:31 by med-doba         ###   ########.fr       */
+/*   Created: 2021/12/28 23:16:01 by med-doba          #+#    #+#             */
+/*   Updated: 2021/12/29 20:27:34 by med-doba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 int	endline(char *ptr)
 {
@@ -73,7 +73,7 @@ char	*get_next_line(int fd)
 {
 	char		*rtn;
 	char		*tab;
-	static char	*ptr = NULL;
+	static char	*ptr[10240];
 	int			n;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
@@ -82,16 +82,16 @@ char	*get_next_line(int fd)
 	if (!tab)
 		return (free(tab), NULL);
 	n = 1;
-	while (endline(ptr) == -1 && n != 0)
+	while (endline(ptr[fd]) == -1 && n != 0)
 	{
 		n = read(fd, tab, BUFFER_SIZE);
 		if (n == -1)
-			return (free(ptr), free(tab), NULL);
+			return (free(ptr[fd]), free(tab), NULL);
 		tab[n] = '\0';
-		ptr = ft_strjoin(ptr, tab);
+		ptr[fd] = ft_strjoin(ptr[fd], tab);
 	}
 	free(tab);
-	rtn = sendline(ptr);
-	ptr = update(ptr);
+	rtn = sendline(ptr[fd]);
+	ptr[fd] = update(ptr[fd]);
 	return (rtn);
 }
